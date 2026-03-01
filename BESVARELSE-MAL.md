@@ -1,10 +1,10 @@
 # Besvarelse - Refleksjon og Analyse
 
-**Student:** [Ditt navn]
+**Student:** [Warda Khalid Rajput]
 
-**Studentnummer:** [Ditt studentnummer]
+**Studentnummer:** [376367]
 
-**Dato:** [Innleveringsdato]
+**Dato:** [01.03.2026]
 
 ---
 
@@ -14,7 +14,58 @@
 
 **Identifiserte entiteter:**
 
-[Skriv ditt svar her - list opp alle entitetene du har identifisert]
+[- 1. Kunde
+En person som registrerer seg og kan leie sykkel.
+- Attributter:
+* kunde_id (unik ID)
+* mobilnummer
+* epost
+* fornavn
+* etternavn
+---
+Vi må vite hvem som leier sykkelen og hvem som skal betale.
+
+
+- 2. Sykkel
+En fysisk sykkel i systemet.
+- Attributter:
+* sykkel_id (unik ID)
+* stasjon_id (hvor den står – NULL hvis utleid)
+* lås_id (hvilken lås den står i – NULL hvis utleid)
+---
+Vi må vite hvor sykkelen er, eller om den er leid ut.
+
+
+- 3. Stasjon
+Et sted der sykler kan hentes og leveres.
+- Attributter:
+* stasjon_id
+* navn
+* adresse
+---
+Systemet må vite hvor syklene står.
+
+
+- 4. Lås
+En lås på en stasjon.
+- Attributter:
+* lås_id
+* stasjon_id
+---
+En stasjon har mange låser. En sykkel festes i én lås.
+
+
+- 5. Utleie
+En registrering av at en kunde leier en sykkel.
+- Attributter:
+* utleie_id
+* kunde_id
+* sykkel_id
+* utlevert_tidspunkt
+* innlevert_tidspunkt (NULL hvis ikke levert ennå)
+* leiebeløp
+--- 
+Vi må lagre når sykkelen ble hentet, når den ble levert, og hvor mye kunden skal betale.]
 
 **Attributter for hver entitet:**
 
@@ -26,11 +77,23 @@
 
 **Valgte datatyper og begrunnelser:**
 
-[Skriv ditt svar her - forklar hvilke datatyper du har valgt for hver attributt og hvorfor]
+[Datatyper:
+- ID-er → SERIAL (unik, automatisk)
+- Navn, adresse, mobil, epost → VARCHAR
+- Tidspunkt → TIMESTAMP
+- Beløp → NUMERIC(10,2)
+- Koordinater → NUMERIC(9,6)
+- Fremmednøkler → INT
+
+
 
 **`CHECK`-constraints:**
 
-[Skriv ditt svar her - list opp alle CHECK-constraints du har lagt til og forklar hvorfor de er nødvendige]
+[CHECK-constraints:
+- Mobilnummer: 8 siffer → CHECK (mobilnummer ~ '^[0-9]{8}$')
+- Epost: må inneholde @ → CHECK (epost ~ '^[^@]+@[^@]+\.[^@]+$')
+- Leiebeløp ≥ 0 → CHECK (leiebelop >= 0)]
+]
 
 **ER-diagram:**
 
@@ -38,31 +101,27 @@
 
 ---
 
-### Oppgave 1.3: Primærnøkler
-
-**Valgte primærnøkler og begrunnelser:**
-
-[Skriv ditt svar her - forklar hvilke primærnøkler du har valgt for hver entitet og hvorfor]
-
-**Naturlige vs. surrogatnøkler:**
-
-[Skriv ditt svar her - diskuter om du har brukt naturlige eller surrogatnøkler og hvorfor]
-
-**Oppdatert ER-diagram:**
-
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
-
 ---
 
 ### Oppgave 1.4: Forhold og fremmednøkler
 
 **Identifiserte forhold og kardinalitet:**
 
-[Skriv ditt svar her - list opp alle forholdene mellom entitetene og angi kardinalitet]
+- En stasjon har mange låser → 1:N
+- En stasjon har mange sykler → 1:N
+- En lås kan holde én sykkel om gangen → 1:0..1
+- En kunde kan ha mange utleier → 1:N
+- En sykkel kan være med i mange utleier over tid → 1:N
+
 
 **Fremmednøkler:**
 
-[Skriv ditt svar her - list opp alle fremmednøklene og forklar hvordan de implementerer forholdene]
+- laas.stasjon_id → refererer til stasjon.stasjon_id (binder lås til stasjon)
+- sykkel.stasjon_id → refererer til stasjon.stasjon_id (hvilken stasjon sykkel står på)
+- sykkel.laas_id → refererer til laas.laas_id (hvilken lås sykkel er låst i)
+- utleie.kunde_id → refererer til kunde.kunde_id (hvilken kunde leier sykkel)
+- utleie.sykkel_id → refererer til sykkel.sykkel_id (hvilken sykkel leies)
+
 
 **Oppdatert ER-diagram:**
 
@@ -74,37 +133,22 @@
 
 **Vurdering av 1. normalform (1NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 1NF og hvorfor]
+- Alle tabeller har enkle verdier (ingen lister i ett felt), og hver rad har en unik ID.
 
 **Vurdering av 2. normalform (2NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 2NF og hvorfor]
+- Alle kolonner i en tabell henger helt sammen med ID-en.  og det er ingen delvise avhengigheter.
 
 **Vurdering av 3. normalform (3NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 3NF og hvorfor]
+- Ingen kolonner avhenger av andre kolonner og alt henger bare på ID-en.
 
 **Eventuelle justeringer:**
 
-[Skriv ditt svar her - hvis modellen ikke var på 3NF, forklar hvilke justeringer du har gjort]
+- Ingen justeringer var nødvendig, modellen er allerede ryddig og følger 3. normalform (3NF).
 
 ---
 
-## Del 2: Database-implementering
-
-### Oppgave 2.1: SQL-skript for database-initialisering
-
-**Plassering av SQL-skript:**
-
-[Bekreft at du har lagt SQL-skriptet i `init-scripts/01-init-database.sql`]
-
-**Antall testdata:**
-
-- Kunder: [antall]
-- Sykler: [antall]
-- Sykkelstasjoner: [antall]
-- Låser: [antall]
-- Utleier: [antall]
 
 ---
 
@@ -112,7 +156,7 @@
 
 **Dokumentasjon av vellykket kjøring:**
 
-[Skriv ditt svar her - f.eks. skjermbilder eller output fra terminalen som viser at databasen ble opprettet uten feil]
+
 
 **Spørring mot systemkatalogen:**
 
@@ -127,7 +171,28 @@ ORDER BY table_name;
 **Resultat:**
 
 ```
-[Skriv resultatet av spørringen her - list opp alle tabellene som ble opprettet]
+[-- Kunder
+INSERT INTO kunde (mobilnummer, epost, fornavn, etternavn) VALUES
+('90000001','ola@norge.no','Ola','Nordmann'),
+('90000002','kari@norge.no','Kari','Nordmann');
+
+-- Stasjoner
+INSERT INTO stasjon (navn, adresse) VALUES
+('Sentrum', 'Storgata 1'),
+('Vest', 'Vestveien 5');
+
+-- Låser
+INSERT INTO laas (stasjon_id) VALUES
+(1),(1),(2),(2);
+
+-- Sykler
+INSERT INTO sykkel (stasjon_id, laas_id) VALUES
+(1,1),(1,2),(2,3),(2,4);
+
+-- Utleier
+INSERT INTO utleie (kunde_id, sykkel_id, utlevert_tidspunkt, innlevert_tidspunkt, leiebelop) VALUES
+(1,1,'2026-03-01 08:00:00', '2026-03-01 09:00:00', 30.00),
+(2,3,'2026-03-01 09:30:00', NULL, 50.00); -- aktiv leie
 ```
 
 ---
@@ -139,19 +204,22 @@ ORDER BY table_name;
 **SQL for å opprette rolle:**
 
 ```sql
-[Skriv din SQL-kode for å opprette rollen 'kunde' her]
+[CREATE ROLE kunde;]
 ```
 
 **SQL for å opprette bruker:**
 
 ```sql
-[Skriv din SQL-kode for å opprette brukeren 'kunde_1' her]
+[CREATE USER kunde_1 WITH PASSWORD 'passord123';
+GRANT kunde TO kunde_1;]
 ```
 
 **SQL for å tildele rettigheter:**
 
 ```sql
-[Skriv din SQL-kode for å tildele rettigheter til rollen her]
+[GRANT SELECT, INSERT, UPDATE ON kunde TO kunde;
+GRANT SELECT, INSERT, UPDATE ON sykkel TO kunde;
+GRANT SELECT, INSERT, UPDATE ON utleie TO kunde;]
 ```
 
 ---
@@ -161,12 +229,17 @@ ORDER BY table_name;
 **SQL for VIEW:**
 
 ```sql
-[Skriv din SQL-kode for VIEW her]
+[CREATE VIEW kunde_utleie_view AS
+SELECT u.utleie_id, u.sykkel_id, u.utlevert_tidspunkt, u.innlevert_tidspunkt, u.leiebelop
+FROM utleie u
+JOIN kunde k ON u.kunde_id = k.kunde_id
+WHERE k.kunde_id = current_setting('app.current_kunde_id')::int;]
 ```
 
 **Ulempe med VIEW vs. POLICIES:**
 
-[Skriv ditt svar her - diskuter minst én ulempe med å bruke VIEW for autorisasjon sammenlignet med POLICIES]
+- VIEW: Skjuler data, men kunden kan fortsatt prøve å endre andre rader hvis rettighetene ikke er strenge.
+- POLICIES (RLS): Stopper kunden fra å se eller endre andres data helt.
 
 ---
 
@@ -182,15 +255,23 @@ ORDER BY table_name;
 
 **Totalt antall utleier per år:**
 
-[Skriv din utregning her]
+- Høysesong (mai-september, 5 måneder): 5 × 20 000 = 100 000
+- Mellomsesong (mars, april, oktober, november, 4 måneder): 4 × 5 000 = 20 000
+- Lavsesong (des, jan, feb, 3 måneder): 3 × 500 = 1 500
+* Totalt per år:
+- 100 000 + 20 000 + 1 500 = 121 500 utleier/år
 
 **Estimat for lagringskapasitet:**
 
-[Skriv din utregning her - vis hvordan du har beregnet lagringskapasiteten for hver tabell]
-
+- Kunder: 1000 × 200 B = 0,2 MB
+- Stasjoner: 20 × 150 B = 0,003 MB
+- Låser: 100 × 50 B = 0,005 MB
+- Sykler: 200 × 100 B = 0,02 MB
+- Utleier: 121 500 × 200 B = 24,3 M
+  
 **Totalt for første år:**
 
-[Skriv ditt estimat her]
+- 0,2 + 0,003 + 0,005 + 0,02 + 24,3 ≈ 24,5 MB
 
 ---
 
@@ -200,23 +281,25 @@ ORDER BY table_name;
 
 **Problem 1: Redundans**
 
-[Skriv ditt svar her - gi konkrete eksempler fra CSV-filen som viser redundans]
+[- Info som kunde, stasjon og sykkel gjentas i hver rad i CSV.
 
 **Problem 2: Inkonsistens**
 
-[Skriv ditt svar her - forklar hvordan redundans kan føre til inkonsistens med eksempler]
+[Hvis en stasjon endrer adresse, må alle rader oppdateres ellers blir noen feil.
 
 **Problem 3: Oppdateringsanomalier**
 
-[Skriv ditt svar her - diskuter slette-, innsettings- og oppdateringsanomalier]
-
+- Slette: Sletter vi siste utleie, mister vi kundedata.
+- Innsetting: Ny kunde krever en utleie først.
+- Oppdatering: Må endre mange rader samtidig.
+- 
 **Fordeler med en indeks:**
 
-[Skriv ditt svar her - forklar hvorfor en indeks ville gjort spørringen mer effektiv]
+- Finner data raskere uten å lese hele tabellen.
 
 **Case 1: Indeks passer i RAM**
 
-[Skriv ditt svar her - forklar hvordan indeksen fungerer når den passer i minnet]
+- Indeksen ligger i minnet og søk skjer raskt.
 
 **Case 2: Indeks passer ikke i RAM**
 
@@ -232,63 +315,67 @@ ORDER BY table_name;
 
 **Foreslått datastruktur:**
 
-[Skriv ditt svar her - f.eks. heap-fil, LSM-tree, eller annen egnet datastruktur]
+- LSM-tree (Log-Structured Merge Tree)
 
 **Begrunnelse:**
 
 **Skrive-operasjoner:**
 
-[Skriv ditt svar her - forklar hvorfor datastrukturen er egnet for mange skrive-operasjoner]
+Passer godt når vi skriver mye, fordi nye data først lagres i minnet og så på disk.
 
 **Lese-operasjoner:**
 
-[Skriv ditt svar her - forklar hvordan datastrukturen håndterer sjeldne lese-operasjoner]
-
+Lesing skjer sjeldent, og datastrukturen finner data selv om de ligger på forskjellige nivåer på disk.
+Kort sagt: LSM-tree er bra for logging og skriver mye, leser lite.
 ---
 
 ### Oppgave 4.4: Validering i flerlags-systemer
 
 **Hvor bør validering gjøres:**
 
-[Skriv ditt svar her - argumenter for validering i ett eller flere lag]
-
+Validering bør gjøres i flere lag: nettleser, applikasjon og database for best sikkerhet og brukeropplevelse.
 **Validering i nettleseren:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+Fordeler: Rask tilbakemelding til brukeren, enklere å rette feil.
+Ulemper: Kan manipuleres eller hoppes over → ikke sikkert alene.
 
 **Validering i applikasjonslaget:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+Fordeler: Kontrollerer logikk før data går til databasen, beskytter mot feil input.
+Ulemper: Må gjøres korrekt, ellers kan feil fortsatt komme gjennom.
 
 **Validering i databasen:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+ordeler: Sikrer at alle data som lagres er gyldige, beskytter mot feil eller ondsinnet input.
+Ulemper: Kan være mindre fleksibel og gi dårligere tilbakemelding til bruker
 
 **Konklusjon:**
 
-[Skriv ditt svar her - oppsummer hvor validering bør gjøres og hvorfor]
-
----
+Validering bør gjøres i alle lag:
+- Nettleser → rask tilbakemelding til brukeren
+- Applikasjon → sjekker logikk og regler
+- Database → sikrer at kun gyldige data lagres
+På denne måten får man både sikkerhet, korrekthet og god brukeropplevelse.
 
 ### Oppgave 4.5: Refleksjon over læringsutbytte
 
 **Hva har du lært så langt i emnet:**
 
-[Skriv din refleksjon her - diskuter sentrale konsepter du har lært]
-
+Jeg har lært om datamodellering, normalisering, SQL, indekser, roller og tilgangskontroll.
+Jeg har også forstått hvorfor det er viktig med strukturert og sikker lagring av data.
 **Hvordan har denne oppgaven bidratt til å oppnå læringsmålene:**
 
-[Skriv din refleksjon her - koble oppgaven til læringsmålene i emnet]
+Oppgaven har hjulpet meg å bruke teori i praksis, lage tabeller, definere relasjoner og skrive SQL. Jeg har øvd på database-integritet, sikkerhet og analyse som er sentrale læringsmål.
 
 Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructure.com/courses/33293/files/folder/Plan%20v%C3%A5ren%202026?preview=4370886
 
 **Hva var mest utfordrende:**
 
-[Skriv din refleksjon her - diskuter hvilke deler av oppgaven som var mest krevende]
+Å designe forholdene og normalisere tabellene slik at alt ble riktig i 3NF. og å forstå validering og tilgangskontroll på flere lag var litt vanskelig.
 
 **Hva har du lært om databasedesign:**
 
-[Skriv din refleksjon her - reflekter over prosessen med å designe en database fra bunnen av]
+Viktigheten av å starte med en klar datamodell før man lager tabeller. og vordan man kan redusere feil, redundans og inkonsistens med normalisering og riktige nøkkelrelasjoner. At planlegging og refleksjon gjør det mye enklere å bygge en database som fungerer i praksis.
 
 ---
 
@@ -296,12 +383,13 @@ Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructu
 
 **Plassering av SQL-spørringer:**
 
-[Bekreft at du har lagt SQL-spørringene i `test-scripts/queries.sql`]
-
+ja
 
 **Eventuelle feil og rettelser:**
 
-[Skriv ditt svar her - hvis noen tester feilet, forklar hva som var feil og hvordan du rettet det]
+var det ofte fordi tabell- eller kolonnenavn ikke stemte.
+Dette ble rettet ved å korrigere navnene i spørringene.
+Noen feil kom av NULL-verdier, som vi håndterte med IS NULL eller COALESCE.
 
 ---
 
