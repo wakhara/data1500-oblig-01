@@ -2,7 +2,7 @@
 
 **Student:** [Ditt navn]
 
-**Studentnummer:** [Ditt studentnummer]
+**Studentnummer:** [Ditt studntnummer]
 
 **Dato:** [Innleveringsdato]
 
